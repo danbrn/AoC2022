@@ -1,0 +1,35 @@
+-- | Advent of Code 2022 - Some utility functions
+
+module Util
+    ( input
+    , tuplify2
+    , tuplify3
+    , pair
+    , halve
+    ) where
+
+import           System.Directory               ( doesFileExist )
+
+-- | Read input (if it exists)
+input :: String -> IO [String]
+input fn = do
+    exists <- doesFileExist fn
+    if exists then lines <$> readFile fn else pure []
+
+-- | Create a tuple from a list with two elements
+tuplify2 :: [a] -> (a, a)
+tuplify2 [x, y] = (x, y)
+tuplify2 _      = error "illegal list length"
+
+-- | Create a tuple from a list with three elements
+tuplify3 :: [a] -> (a, a, a)
+tuplify3 [x, y, z] = (x, y, z)
+tuplify3 _         = error "illegal list length"
+
+-- | Alias for tuplify2
+pair :: [a] -> (a, a)
+pair = tuplify2
+
+-- | Split a list into two of (about) equal size
+halve :: [a] -> ([a], [a])
+halve xs = splitAt ((length xs + 1) `div` 2) xs

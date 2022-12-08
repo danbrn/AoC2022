@@ -1,0 +1,64 @@
+name:                AoC2022
+version:             0.1.0.0
+github:              "danbrn/AoC2022"
+license:             BSD3
+author:              "Daniel Brännvall"
+maintainer:          "daniel@brannvall.net"
+copyright:           "2022 Daniel Brännvall"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/danbrn/AoC2022#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- split
+- containers
+- directory
+- optparse-applicative
+- utility-ht
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+
+executables:
+  AoC2022-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - AoC2022
+
+tests:
+  AoC2022-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - AoC2022

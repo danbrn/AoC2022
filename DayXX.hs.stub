@@ -1,0 +1,15 @@
+-- | Advent of Code 2022 - Solution for day ##DAY##
+
+module Day##DAY##
+    ( solve
+    , test
+    ) where
+
+solve :: [String] -> (Maybe String, Maybe String)
+solve xs = (Nothing, Nothing)
+
+sample :: [String]
+sample = []
+
+test :: (Maybe String, Maybe String)
+test = solve sample
