@@ -30,6 +30,7 @@ import           Day05
 import           Day06
 import           Day07
 import           Day08
+{-- insert import here --}
 
 days :: Map Int ([String] -> (Maybe String, Maybe String))
 days = M.fromList
@@ -41,6 +42,7 @@ days = M.fromList
   , (6, Day06.solve)
   , (7, Day07.solve)
   , (8, Day08.solve)
+  {-- insert map entry here --}
   ]
 
 newtype Arguments = Arguments
