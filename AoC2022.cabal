@@ -33,6 +33,7 @@ library
       Day06
       Day07
       Day08
+      Day09
       Util
   other-modules:
       Paths_AoC2022
@@ -43,6 +44,8 @@ library
       base >=4.7 && <5
     , containers
     , directory
+    , extra
+    , mtl
     , optparse-applicative
     , split
     , utility-ht
@@ -60,6 +63,8 @@ executable AoC2022-exe
     , base >=4.7 && <5
     , containers
     , directory
+    , extra
+    , mtl
     , optparse-applicative
     , split
     , utility-ht
@@ -78,6 +83,8 @@ test-suite AoC2022-test
     , base >=4.7 && <5
     , containers
     , directory
+    , extra
+    , mtl
     , optparse-applicative
     , split
     , utility-ht

@@ -6,8 +6,13 @@ module Util
     , tuplify3
     , pair
     , halve
+    , opPairs
+    , addPairs
+    , subPairs
     ) where
 
+import           Data.Bifunctor                 ( bimap )
+import           Data.Tuple.Extra               ( both )
 import           System.Directory               ( doesFileExist )
 
 -- | Read input (if it exists)
@@ -33,3 +38,15 @@ pair = tuplify2
 -- | Split a list into two of (about) equal size
 halve :: [a] -> ([a], [a])
 halve xs = splitAt ((length xs + 1) `div` 2) xs
+
+-- | Apply operator to two pairs
+opPairs :: (a -> b -> c) -> (a, a) -> (b, b) -> (c, c)
+opPairs f x = uncurry bimap (both f x)
+
+-- | Add two pairs
+addPairs :: Num a => (a, a) -> (a, a) -> (a, a)
+addPairs = opPairs (+)
+
+-- | Subtract pairs
+subPairs :: Num a => (a, a) -> (a, a) -> (a, a)
+subPairs = opPairs (-)

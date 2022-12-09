@@ -26,6 +26,8 @@ dependencies:
 - directory
 - optparse-applicative
 - utility-ht
+- mtl
+- extra
 
 ghc-options:
 - -Wall
