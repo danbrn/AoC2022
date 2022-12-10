@@ -8,6 +8,7 @@ module Day10
 import           Data.List.Extra                ( chunksOf
                                                 , drop1
                                                 , foldl'
+                                                , trimEnd
                                                 )
 import           Data.List.HT                   ( sieve )
 import           Text.Read                      ( readMaybe )
@@ -31,7 +32,7 @@ solve xs = (Just result1, Just result2)
   where
     result1 =
         show . sum . map (uncurry (*)) . sieve 40 . drop 19 $ take 220 signal
-    result2 = ('\n' :) . unlines . chunksOf 40 $ map draw signal
+    result2 = ('\n' :) . trimEnd . unlines . take 6 . chunksOf 40 $ map draw signal
     signal  = zip [1 ..] . reverse . foldl' apply [1] $ parse xs
 
 sample :: [String]
