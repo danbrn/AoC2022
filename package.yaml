@@ -28,6 +28,7 @@ dependencies:
 - utility-ht
 - mtl
 - extra
+- megaparsec
 
 ghc-options:
 - -Wall
