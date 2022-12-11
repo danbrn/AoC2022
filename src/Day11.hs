@@ -6,8 +6,7 @@ module Day11
     ) where
 
 import           Data.Char                      ( isSpace )
-import           Data.List.Extra                ( find
-                                                , foldl'
+import           Data.List.Extra                ( foldl'
                                                 , groupSort
                                                 , iterate'
                                                 , sortOn
