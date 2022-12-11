@@ -110,9 +110,8 @@ playRound :: Bool -> Int -> MonkeyMap -> MonkeyMap
 playRound vw divisor mm = foldl' (flip (monkeyThrow vw divisor)) mm $ M.keys mm
 
 updateThrower :: Monkey -> MonkeyMap -> MonkeyMap
-updateThrower m = M.insert
-    (num m)
-    (m { itms = [], insp = insp m + fromIntegral (length $ itms m) })
+updateThrower m =
+    M.insert (num m) (m { itms = [], insp = insp m + length (itms m) })
 
 updateCatchers :: [(Int, [Int])] -> MonkeyMap -> MonkeyMap
 updateCatchers items mm = foldl'
@@ -125,11 +124,13 @@ updateCatchers items mm = foldl'
     items
 
 monkeyThrow :: Bool -> Int -> Int -> MonkeyMap -> MonkeyMap
-monkeyThrow vw divisor m mm = updateCatchers addressed $ updateThrower monkey mm
+monkeyThrow vw divisor m mm = updateCatchers addressed
+    $ updateThrower monkey mm
   where
     monkey@(Monkey _ items op _ tst insp) = mm M.! m
     inspected x =
-        let baseWorry = op x in if vw then baseWorry `mod` divisor else baseWorry `div` 3
+        let baseWorry = op x
+        in  if vw then baseWorry `mod` divisor else baseWorry `div` 3
     addressed = groupSort $ map ((\x -> (tst x, x)) . inspected) items
 
 solve :: [String] -> (Maybe String, Maybe String)
@@ -144,7 +145,12 @@ solve xs = (Just $ solve' False 20, Just $ solve' True 10000)
             $ M.elems
             $ (!! n)
             $ iterate' (playRound vw divisor) monkeys
-    (divisor, monkeys) = (\xs -> (product $ map dvsr xs, foldl' (\a x -> M.insert (num x) x a) M.empty xs))
+    (divisor, monkeys) =
+        (\xs ->
+                ( product $ map dvsr xs
+                , foldl' (\a x -> M.insert (num x) x a) M.empty xs
+                )
+            )
             . map (fromJust . P.parseMaybe monkeyParser)
             $ monkeyDescs xs
 
