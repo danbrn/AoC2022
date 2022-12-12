@@ -30,6 +30,7 @@ dependencies:
 - extra
 - megaparsec
 - composition
+- search-algorithms
 
 ghc-options:
 - -Wall

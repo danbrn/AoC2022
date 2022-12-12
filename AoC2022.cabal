@@ -36,6 +36,7 @@ library
       Day09
       Day10
       Day11
+      Day12
       Util
   other-modules:
       Paths_AoC2022
@@ -51,6 +52,7 @@ library
     , megaparsec
     , mtl
     , optparse-applicative
+    , search-algorithms
     , split
     , utility-ht
   default-language: Haskell2010
@@ -72,6 +74,7 @@ executable AoC2022-exe
     , megaparsec
     , mtl
     , optparse-applicative
+    , search-algorithms
     , split
     , utility-ht
   default-language: Haskell2010
@@ -94,6 +97,7 @@ test-suite AoC2022-test
     , megaparsec
     , mtl
     , optparse-applicative
+    , search-algorithms
     , split
     , utility-ht
   default-language: Haskell2010
