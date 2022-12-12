@@ -9,9 +9,17 @@ module Util
     , opPairs
     , addPairs
     , subPairs
+    , manhattan
+    , (.:)
+    , (.:.)
+    , (.::)
     ) where
 
 import           Data.Bifunctor                 ( bimap )
+import           Data.Composition               ( (.:)
+                                                , (.:.)
+                                                , (.::)
+                                                )
 import           Data.Tuple.Extra               ( both )
 import           System.Directory               ( doesFileExist )
 
@@ -50,3 +58,7 @@ addPairs = opPairs (+)
 -- | Subtract pairs
 subPairs :: Num a => (a, a) -> (a, a) -> (a, a)
 subPairs = opPairs (-)
+
+-- | Calculates the Manhattan distance between two pairs
+manhattan :: Num a => (a, a) -> (a, a) -> a
+manhattan = uncurry (+) . both abs .: subPairs
