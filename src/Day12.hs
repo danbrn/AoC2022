@@ -39,7 +39,7 @@ populate m (p, c) = M.insert p node m
     n e s = Node { position = p, elevation = e, special = s, reachable = [] }
     node = case c of
         'S' -> n 0 Start
-        'E' -> n 26 End
+        'E' -> n 25 End
         _   -> n (ord c - ord 'a') Normal
 
 adjacent :: Position -> [Position]
