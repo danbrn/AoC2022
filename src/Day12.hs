@@ -1,3 +1,5 @@
+{-# LANGUAGE TupleSections #-}
+
 -- | Advent of Code 2022 - Solution for day 12
 
 module Day12
