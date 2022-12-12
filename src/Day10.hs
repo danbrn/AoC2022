@@ -6,7 +6,6 @@ module Day10
     ) where
 
 import           Data.List.Extra                ( chunksOf
-                                                , drop1
                                                 , foldl'
                                                 , trimEnd
                                                 )
@@ -14,7 +13,7 @@ import           Data.List.HT                   ( sieve )
 import           Text.Read                      ( readMaybe )
 
 parse :: [String] -> [Maybe Int]
-parse = map (readMaybe . drop1 . snd . splitAt 3)
+parse = map (readMaybe . drop 4)
 
 apply :: [Int] -> Maybe Int -> [Int]
 apply (x : xs) (Just cmd) = x + cmd : x : x : xs
