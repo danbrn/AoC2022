@@ -5,13 +5,13 @@ module Day07
     , test
     ) where
 
-import           Data.List                      ( foldl'
+import           Data.List.Extra                ( foldl'
                                                 , isPrefixOf
-                                                , nub
+                                                , nubOrd
                                                 , sort
                                                 , sortOn
+                                                , splitOn
                                                 )
-import           Data.List.Split                ( splitOn )
 import           Data.Map                       ( Map )
 import qualified Data.Map                      as M
 import           Data.Ord                       ( Down(Down) )
@@ -33,7 +33,7 @@ isDirectory (Directory _) = True
 isDirectory _             = False
 
 parse :: [String] -> [Entry]
-parse = nub . sort . snd . foldl' go ("", [])
+parse = nubOrd . sort . snd . foldl' go ("", [])
   where
     go (pwd, fs) cmd = case cmd of
         "$ cd /"  -> ("", fs)
@@ -50,9 +50,6 @@ parse = nub . sort . snd . foldl' go ("", [])
 
 parentPath :: String -> String
 parentPath = reverse . tail . dropWhile (/= '/') . reverse
-
-populateMap :: [Entry] -> Map Entry Int
-populateMap = foldl' (\m e -> M.insert e (size e) m) M.empty
 
 calculateDirSizes :: Map Entry Int -> Map Entry Int
 calculateDirSizes dirs =
@@ -78,13 +75,13 @@ solve xs =
             $ filter (isDirectory . fst)
             $ M.assocs
             $ calculateDirSizes
-            $ populateMap
+            $ foldl' (\m e -> M.insert e (size e) m) M.empty
             $ parse xs
     needed = 30000000 - (70000000 - maximum dirs)
 
 
 sample :: [String]
-sample =
+sample = -- a: 95437, b: 24933642
     [ "$ cd /"
     , "$ ls"
     , "dir a"

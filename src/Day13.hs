@@ -5,7 +5,6 @@ module Day13
     , test
     ) where
 
-import           Data.Char                      ( isDigit )
 import           Data.List.Extra                ( chunksOf
                                                 , elemIndex
                                                 , headDef
@@ -45,9 +44,7 @@ l .<=>. r = headDef (length l `compare` length r) . dropWhile (== EQ) $ zipWith
 type Parser = Parsec Void String
 
 intParser :: Parser Tree
-intParser = do
-    digits <- P.some (P.satisfy isDigit)
-    pure $ Leaf $ read digits
+intParser = Leaf . read <$> P.some P.digitChar
 
 listParser :: Parser Tree
 listParser = do
@@ -69,7 +66,7 @@ solve xs = (Just solve1, Just solve2)
     solve2 = show $ product $ map succ $ mapMaybe (`elemIndex` sorted) dividers
 
 sample :: [String]
-sample =
+sample = -- a: 13, b: 140
     [ "[1,1,3,1,1]"
     , "[1,1,5,1,1]"
     , ""

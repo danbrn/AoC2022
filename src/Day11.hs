@@ -10,26 +10,33 @@ import           Data.List.Extra                ( foldl'
                                                 , groupSort
                                                 , iterate'
                                                 , sortOn
+                                                , splitOn
                                                 )
-import           Data.List.Split                ( splitOn )
 import           Data.Map                       ( Map )
 import qualified Data.Map                      as M
 import           Data.Maybe                     ( fromJust )
 import           Data.Ord                       ( Down(..) )
 import           Data.Void                      ( Void )
-import           Text.Megaparsec                ( Parsec
+import           Text.Megaparsec                ( (<|>)
+                                                , Parsec
                                                 , many
+                                                , parseMaybe
+                                                , satisfy
+                                                , sepBy
                                                 , some
                                                 )
-import qualified Text.Megaparsec               as P
-import qualified Text.Megaparsec.Char          as P
+import           Text.Megaparsec.Char           ( char
+                                                , digitChar
+                                                , newline
+                                                , string
+                                                )
 
 data Monkey = Monkey
     { num  :: Int
     , itms :: [Int]
-    , op   :: Int -> Int
+    , _op  :: Int -> Int
     , dvsr :: Int
-    , tst  :: Int -> Int
+    , _tst :: Int -> Int
     , insp :: Int
     }
 
@@ -39,33 +46,29 @@ type MonkeyMap = Map Int Monkey
 
 monkeyParser :: Parser Monkey
 monkeyParser = do
-    _    <- P.string "Monkey "
+    _    <- string "Monkey "
     num  <- integerParser
-    _    <- P.char ':'
-    _    <- P.newline
+    _    <- char ':'
+    _    <- newline
     itms <- itemsParser
-    _    <- P.newline
+    _    <- newline
     op   <- opParser
-    _    <- P.newline
+    _    <- newline
     tst  <- testParser
     let (dvsr, _, _) = tst
     pure $ Monkey num itms op dvsr (mkTst tst) 0
 
 itemsParser :: Parser [Int]
 itemsParser = do
-    _ <- P.takeWhileP Nothing isSpace
-    _ <- P.string "Starting items: "
-    many itemParser
-  where
-    itemParser = do
-        _ <- P.takeWhileP Nothing (`elem` [',', ' '])
-        integerParser
+    _ <- many (satisfy isSpace)
+    _ <- string "Starting items: "
+    integerParser `sepBy` string ", "
 
 opParser :: Parser (Int -> Int)
 opParser = do
-    _  <- P.takeWhileP Nothing isSpace
-    _  <- P.string "Operation: new = old "
-    op <- many (P.satisfy (/= '\n'))
+    _  <- many (satisfy isSpace)
+    _  <- string "Operation: new = old "
+    op <- many (satisfy (/= '\n'))
     pure $ mkOp op
 
 mkOp :: String -> (Int -> Int)
@@ -77,36 +80,35 @@ mkOp str = case o of
 
 testParser :: Parser (Int, Int, Int)
 testParser = do
-    _         <- P.takeWhileP Nothing isSpace
-    _         <- P.string "Test: divisible by "
+    _         <- many (satisfy isSpace)
+    _         <- string "Test: divisible by "
     divisible <- integerParser
-    _         <- P.newline
+    _         <- newline
     ifTrue    <- testResultParser
-    _         <- P.newline
+    _         <- newline
     ifFalse   <- testResultParser
-    _         <- P.newline
+    _         <- newline
     pure (divisible, ifTrue, ifFalse)
 
 mkTst :: (Int, Int, Int) -> (Int -> Int)
 mkTst (d, t, f) x = if x `mod` d == 0 then t else f
 
-
 testResultParser :: Parser Int
 testResultParser = do
-    _ <- P.takeWhileP Nothing isSpace
-    _ <- P.string "If "
-    _ <- P.string "true" P.<|> P.string "false"
-    _ <- P.string ": throw to monkey "
+    _ <- many (satisfy isSpace)
+    _ <- string "If "
+    _ <- string "true" <|> string "false"
+    _ <- string ": throw to monkey "
     integerParser
 
 integerParser :: Parser Int
-integerParser = read <$> P.try (some P.digitChar)
+integerParser = read <$> some digitChar
 
 monkeyDescs :: [String] -> [String]
 monkeyDescs xs = map unlines $ splitOn [[]] xs
 
-playRound :: Bool -> Int -> MonkeyMap -> MonkeyMap
-playRound vw divisor mm = foldl' (flip (monkeyThrow vw divisor)) mm $ M.keys mm
+playRound :: (Int -> Int) -> MonkeyMap -> MonkeyMap
+playRound wm mm = foldl' (flip (monkeyThrow wm)) mm $ M.keys mm
 
 updateThrower :: Monkey -> MonkeyMap -> MonkeyMap
 updateThrower m =
@@ -122,39 +124,37 @@ updateCatchers items mm = foldl'
     mm
     items
 
-monkeyThrow :: Bool -> Int -> Int -> MonkeyMap -> MonkeyMap
-monkeyThrow vw divisor m mm = updateCatchers addressed
-    $ updateThrower monkey mm
+monkeyThrow :: (Int -> Int) -> Int -> MonkeyMap -> MonkeyMap
+monkeyThrow wm m mm = updateCatchers addressed $ updateThrower monkey mm
   where
-    monkey@(Monkey _ items op _ tst insp) = mm M.! m
-    inspected x =
-        let baseWorry = op x
-        in  if vw then baseWorry `mod` divisor else baseWorry `div` 3
+    monkey@(Monkey _ items op _ tst _) = mm M.! m
+    inspected x = wm $ op x
     addressed = groupSort $ map ((\x -> (tst x, x)) . inspected) items
 
 solve :: [String] -> (Maybe String, Maybe String)
-solve xs = (Just $ solve' False 20, Just $ solve' True 10000)
+solve xs = (Just $ solve' 20, Just $ solve' 10000)
   where
-    solve' vw n =
-        show
-            $ product
-            $ take 2
-            $ sortOn Down
-            $ map insp
-            $ M.elems
-            $ (!! n)
-            $ iterate' (playRound vw divisor) monkeys
+    solve' n =
+        let worryManager = if n < 100 then (`div` 3) else (`mod` divisor)
+        in  show
+                $ product
+                $ take 2
+                $ sortOn Down
+                $ map insp
+                $ M.elems
+                $ (!! n)
+                $ iterate' (playRound worryManager) monkeys
     (divisor, monkeys) =
-        (\xs ->
-                ( product $ map dvsr xs
-                , foldl' (\a x -> M.insert (num x) x a) M.empty xs
+        (\xs' ->
+                ( product $ map dvsr xs'
+                , foldl' (\a x -> M.insert (num x) x a) M.empty xs'
                 )
             )
-            . map (fromJust . P.parseMaybe monkeyParser)
+            . map (fromJust . parseMaybe monkeyParser)
             $ monkeyDescs xs
 
 sample :: [String]
-sample =
+sample = -- a: 10605, b: 2713310158
     [ "Monkey 0:"
     , "  Starting items: 79, 98"
     , "  Operation: new = old * 19"

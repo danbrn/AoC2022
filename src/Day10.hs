@@ -31,11 +31,20 @@ solve xs = (Just result1, Just result2)
   where
     result1 =
         show . sum . map (uncurry (*)) . sieve 40 . drop 19 $ take 220 signal
-    result2 = ('\n' :) . trimEnd . unlines . take 6 . chunksOf 40 $ map draw signal
-    signal  = zip [1 ..] . reverse . foldl' apply [1] $ parse xs
+    result2 =
+        ('\n' :) . trimEnd . unlines . take 6 . chunksOf 40 $ map draw signal
+    signal = zip [1 ..] . reverse . foldl' apply [1] $ parse xs
 
 sample :: [String]
-sample = -- 13140
+sample =
+{- a: 13140, b:
+-- ##..##..##..##..##..##..##..##..##..##..
+-- ###...###...###...###...###...###...###.
+-- ####....####....####....####....####....
+-- #####.....#####.....#####.....#####.....
+-- ######......######......######......####
+-- #######.......#######.......#######.....
+-}
     [ "addx 15"
     , "addx -11"
     , "addx 6"

@@ -8,22 +8,22 @@ module Day08
     ) where
 
 import           Data.Char                      ( digitToInt )
-import           Data.List                      ( foldl'
-                                                , nub
+import           Data.List.Extra                ( foldl'
+                                                , nubSort
                                                 , sort
                                                 , tails
                                                 , transpose
                                                 )
 
 visibleRow :: [Int] -> [Int]
-visibleRow row = nub $ sort $ vr row ++ map (len - 1 -) (vr (reverse row))
+visibleRow row = nubSort $ vr row ++ map (len - 1 -) (vr (reverse row))
   where
     vr ts = snd . foldl' isVisible (-1, []) $ zip [0 ..] ts
     isVisible (m, vs) (i, t) = if t > m then (t, i : vs) else (m, vs)
     len = length row
 
 visible :: [[Int]] -> Int
-visible trees = length . nub . sort $ concat visibleH ++ concat visibleV
+visible trees = length . nubSort $ concat visibleH ++ concat visibleV
   where
     visibleH =
         foldl' (\(y, tss) ts -> (y + 1, tss ++ map (, y) ts)) (0, [])
@@ -56,7 +56,8 @@ solve xs = (Just $ show $ visible trees, Just $ show $ distance trees)
     where trees = map (map digitToInt) xs
 
 sample :: [String]
-sample = ["30373", "25512", "65332", "33549", "35390"]
+sample = -- a: 21, b: 8
+    ["30373", "25512", "65332", "33549", "35390"]
 
 test :: (Maybe String, Maybe String)
 test = solve sample

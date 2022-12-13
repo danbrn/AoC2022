@@ -5,7 +5,7 @@ module Day04
     , test
     ) where
 
-import           Data.List.Split                ( splitOn )
+import           Data.List.Extra                ( splitOn )
 
 import           Util                           ( pair )
 
@@ -27,7 +27,14 @@ solve xs =
     where result f = length $ filter f $ map parse xs
 
 sample :: [String]
-sample = ["2-4,6-8", "2-3,4-5", "5-7,7-9", "2-8,3-7", "6-6,4-6", "2-6,4-8"]
+sample = -- a: 2, b: 4
+    [ "2-4,6-8"
+    , "2-3,4-5"
+    , "5-7,7-9"
+    , "2-8,3-7"
+    , "6-6,4-6"
+    , "2-6,4-8"
+    ]
 
 test :: (Maybe String, Maybe String)
 test = solve sample

@@ -15,7 +15,7 @@ solve xs = (Just $ show $ head kcals, Just $ show $ sum $ take 3 kcals)
     kcals = sortBy (flip compare) $ map (sum . map read) $ splitOn [[]] xs
 
 sample :: [String]
-sample =
+sample = -- a: 24000, b: 45000
     [ "1000"
     , "2000"
     , "3000"

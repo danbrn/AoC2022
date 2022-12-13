@@ -7,8 +7,9 @@ module Day09
 
 import           Control.Monad.State
 import           Data.Bifunctor                 ( bimap )
-import           Data.List                      ( foldl' )
-import           Data.List.Split                ( splitOn )
+import           Data.List.Extra                ( foldl'
+                                                , splitOn
+                                                )
 import           Data.Set                       ( Set )
 import qualified Data.Set                      as S
 import           Data.Tuple.Extra               ( both )
@@ -74,8 +75,10 @@ solve xs = (Just $ solve' 2, Just $ solve' 10)
     solve' l = show $ S.size $ evalState (move moves) (initState l)
 
 sample :: [String]
---sample = ["R 4", "U 4", "L 3", "D 1", "R 4", "D 1", "L 5", "R 2"]
-sample = ["R 5", "U 8", "L 8", "D 3", "R 17", "D 10", "L 25", "U 20"]
+-- sample = -- a: 13, b: ?
+--     ["R 4", "U 4", "L 3", "D 1", "R 4", "D 1", "L 5", "R 2"]
+sample = -- a: ?, b: 36
+    ["R 5", "U 8", "L 8", "D 3", "R 17", "D 10", "L 25", "U 20"]
 
 test :: (Maybe String, Maybe String)
 test = solve sample

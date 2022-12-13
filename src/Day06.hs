@@ -5,8 +5,8 @@ module Day06
     , test
     ) where
 
-import           Data.List                      ( find
-                                                , nub
+import           Data.List.Extra                ( find
+                                                , nubOrd
                                                 , tails
                                                 )
 
@@ -19,10 +19,11 @@ solve xs = (show . fst <$> pos 4, show . fst <$> pos 14)
             . map (take n)
             . tails
             $ head xs
-    pos n = find (\(_, c) -> length (nub c) == n) $ chunks n
+    pos n = find (\(_, c) -> length (nubOrd c) == n) $ chunks n
 
 sample :: [String]
-sample = ["mjqjpqmgbljsphdztnvjfqwrcgsmlb"]
+sample = -- a: 7, b: 19
+    ["mjqjpqmgbljsphdztnvjfqwrcgsmlb"]
 
 test :: (Maybe String, Maybe String)
 test = solve sample

@@ -9,7 +9,7 @@ import           Data.Char                      ( isAlpha
                                                 , isAsciiLower
                                                 , ord
                                                 )
-import           Data.List                      ( nub )
+import           Data.List.Extra                ( nubOrd )
 import           Data.List.Split                ( chunksOf )
 
 import           Util                           ( halve
@@ -24,13 +24,13 @@ priority x | not $ isAlpha x = error "illegal contents"
 solve :: [String] -> (Maybe String, Maybe String)
 solve xs = (Just $ show priorities, Just $ show badgePrios)
   where
-    findError (as, bs) = nub $ filter (`elem` bs) as
+    findError (as, bs) = nubOrd $ filter (`elem` bs) as
     priorities = sum $ map priority $ concatMap (findError . halve) xs
     badge (as, bs, cs) = head $ filter (\x -> x `elem` bs && x `elem` cs) as
     badgePrios = sum $ map (priority . badge . tuplify3) $ chunksOf 3 xs
 
 sample :: [String]
-sample =
+sample = -- a: 157, b: 70
     [ "vJrwpWtwJgWrhcsFMMfFFhFp"
     , "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL"
     , "PmmdzqPrVvPwwTWBwg"

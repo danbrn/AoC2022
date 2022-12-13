@@ -74,7 +74,8 @@ solve xs = (Just $ show score, Just $ show score')
     score' = sum $ map (uncurry matchScore' . bimap shape wantedResult) pairs
 
 sample :: [String]
-sample = ["A Y", "B X", "C Z"]
+sample = -- a: 15. b: 12
+    ["A Y", "B X", "C Z"]
 
 test :: (Maybe String, Maybe String)
 test = solve sample
