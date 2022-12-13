@@ -5,16 +5,12 @@ module Day13
     , test
     ) where
 
-import           Data.List.Extra                ( chunksOf
-                                                , elemIndex
+import           Data.List.Extra                ( elemIndex
                                                 , headDef
                                                 , sort
                                                 )
 import           Data.Maybe                     ( mapMaybe )
 import           Data.Void
-import           Text.Megaparsec                ( Parsec
-                                                , parseMaybe
-                                                )
 import qualified Text.Megaparsec               as P
 import qualified Text.Megaparsec.Char          as P
 
@@ -36,12 +32,11 @@ Leaf l <=> Node r = [Leaf l] .<=>. r
 Node l <=> Node r = l .<=>. r
 
 (.<=>.) :: [Tree] -> [Tree] -> Ordering
-l .<=>. r = headDef (length l `compare` length r) . dropWhile (== EQ) $ zipWith
-    (<=>)
-    l
-    r
+l .<=>. r =
+    let tiebreak = length l `compare` length r
+    in  headDef tiebreak $ dropWhile (== EQ) $ zipWith (<=>) l r
 
-type Parser = Parsec Void String
+type Parser = P.Parsec Void String
 
 intParser :: Parser Tree
 intParser = Leaf . read <$> P.some P.digitChar
@@ -54,16 +49,19 @@ listParser = do
     pure $ Node elems
 
 solve :: [String] -> (Maybe String, Maybe String)
-solve xs = (Just solve1, Just solve2)
+solve xs = (Just $ show solve1, Just $ show solve2)
   where
-    lists    = mapMaybe (parseMaybe listParser) xs
-    pairs    = map pair $ chunksOf 2 lists
-    dividers = mapMaybe (parseMaybe listParser) ["[[2]]", "[[6]]"]
-    sorted   = sort $ lists ++ dividers
-    solve1   = show $ sum $ map fst $ filter snd $ zip [1 :: Int ..] $ map
-        (uncurry (.<.))
-        pairs
-    solve2 = show $ product $ map succ $ mapMaybe (`elemIndex` sorted) dividers
+    (dividers, lists) =
+        splitAt 2 $ mapMaybe (P.parseMaybe listParser) $ "[[2]]" : "[[6]]" : xs
+    sorted = sort $ dividers ++ lists
+    solve1 =
+        sum
+            $ map fst
+            $ filter snd
+            $ zip [1 :: Int ..]
+            $ map (uncurry (.<.))
+            $ pairUp lists
+    solve2 = product $ map succ $ mapMaybe (`elemIndex` sorted) dividers
 
 sample :: [String]
 sample = -- a: 13, b: 140

@@ -5,6 +5,7 @@ module Util
     , tuplify2
     , tuplify3
     , pair
+    , pairUp
     , halve
     , opPairs
     , addPairs
@@ -20,6 +21,7 @@ import           Data.Composition               ( (.:)
                                                 , (.:.)
                                                 , (.::)
                                                 )
+import           Data.List.Extra                ( chunksOf )
 import           Data.Tuple.Extra               ( both )
 import           System.Directory               ( doesFileExist )
 
@@ -42,6 +44,10 @@ tuplify3 _         = error "illegal list length"
 -- | Alias for tuplify2
 pair :: [a] -> (a, a)
 pair = tuplify2
+
+-- | Splits list into pairs (and dies if uneven)
+pairUp :: [a] -> [(a, a)]
+pairUp = map pair . chunksOf 2
 
 -- | Split a list into two of (about) equal size
 halve :: [a] -> ([a], [a])
