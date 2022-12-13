@@ -6,16 +6,15 @@ module Day13
     ) where
 
 import           Data.Char                      ( isDigit )
-import           Data.List.Extra                ( elemIndex
+import           Data.List.Extra                ( chunksOf
+                                                , elemIndex
                                                 , headDef
-                                                , intercalate
                                                 , sort
-                                                , splitOn
                                                 )
 import           Data.Maybe                     ( mapMaybe )
 import           Data.Void
-import           Text.Megaparsec                ( (<|>)
-                                                , Parsec
+import           Text.Megaparsec                ( Parsec
+                                                , parseMaybe
                                                 )
 import qualified Text.Megaparsec               as P
 import qualified Text.Megaparsec.Char          as P
@@ -24,10 +23,6 @@ import           Util
 
 data Tree = Node [Tree] | Leaf Int
   deriving Eq
-
-instance Show Tree where
-    show (Node x) = "[" ++ intercalate "," (map show x) ++ "]"
-    show (Leaf x) = show x
 
 instance Ord Tree where
     compare = (<=>)
@@ -57,20 +52,20 @@ intParser = do
 listParser :: Parser Tree
 listParser = do
     _     <- P.char '['
-    elems <- (listParser <|> intParser) `P.sepBy` P.char ','
+    elems <- (listParser P.<|> intParser) `P.sepBy` P.char ','
     _     <- P.char ']'
     pure $ Node elems
 
 solve :: [String] -> (Maybe String, Maybe String)
 solve xs = (Just solve1, Just solve2)
   where
-    pairs    = map (pair . mapMaybe (P.parseMaybe listParser)) $ splitOn [""] xs
-    lists    = mapMaybe (P.parseMaybe listParser) xs
-    dividers = mapMaybe (P.parseMaybe listParser) ["[[2]]", "[[6]]"]
+    lists    = mapMaybe (parseMaybe listParser) xs
+    pairs    = map pair $ chunksOf 2 lists
+    dividers = mapMaybe (parseMaybe listParser) ["[[2]]", "[[6]]"]
     sorted   = sort $ lists ++ dividers
-    indices =
-        map fst $ filter snd $ zip [1 :: Int ..] $ map (uncurry (.<.)) pairs
-    solve1 = show $ sum indices
+    solve1   = show $ sum $ map fst $ filter snd $ zip [1 :: Int ..] $ map
+        (uncurry (.<.))
+        pairs
     solve2 = show $ product $ map succ $ mapMaybe (`elemIndex` sorted) dividers
 
 sample :: [String]
