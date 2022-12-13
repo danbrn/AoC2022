@@ -37,6 +37,7 @@ library
       Day10
       Day11
       Day12
+      Day13
       Util
   other-modules:
       Paths_AoC2022
