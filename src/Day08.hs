@@ -10,7 +10,6 @@ module Day08
 import           Data.Char                      ( digitToInt )
 import           Data.List.Extra                ( foldl'
                                                 , nubSort
-                                                , sort
                                                 , tails
                                                 , transpose
                                                 )

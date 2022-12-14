@@ -46,17 +46,17 @@ type MonkeyMap = Map Int Monkey
 
 monkeyParser :: Parser Monkey
 monkeyParser = do
-    _    <- string "Monkey "
-    num  <- integerParser
-    _    <- char ':'
-    _    <- newline
-    itms <- itemsParser
-    _    <- newline
-    op   <- opParser
-    _    <- newline
-    tst  <- testParser
-    let (dvsr, _, _) = tst
-    pure $ Monkey num itms op dvsr (mkTst tst) 0
+    _ <- string "Monkey "
+    n <- integerParser
+    _ <- char ':'
+    _ <- newline
+    i <- itemsParser
+    _ <- newline
+    o <- opParser
+    _ <- newline
+    t <- testParser
+    let (d, _, _) = t
+    pure $ Monkey n i o d (mkTst t) 0
 
 itemsParser :: Parser [Int]
 itemsParser = do
