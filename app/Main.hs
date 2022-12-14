@@ -35,6 +35,7 @@ import           Day10
 import           Day11
 import           Day12
 import           Day13
+import           Day14
 {-- insert import here --}
 
 days :: Map Int ([String] -> (Maybe String, Maybe String))
@@ -52,6 +53,7 @@ days = M.fromList
   , (11, Day11.solve)
   , (12, Day12.solve)
   , (13, Day13.solve)
+  , (14, Day14.solve)
   {-- insert map entry here --}
   ]
 
