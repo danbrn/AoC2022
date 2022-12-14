@@ -31,6 +31,7 @@ dependencies:
 - megaparsec
 - composition
 - search-algorithms
+- unordered-containers
 
 ghc-options:
 - -Wall

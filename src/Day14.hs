@@ -5,50 +5,50 @@ module Day14
     , test
     ) where
 
+import qualified Data.HashSet                  as S
 import           Data.List.Extra                ( find
                                                 , foldl'
                                                 , splitOn
-                                                )
-import qualified Data.Map                      as M
-import           Data.Maybe                     ( isJust
-                                                , isNothing
                                                 )
 import           Data.Tuple.Extra               ( both )
 import           Prelude                 hiding ( floor )
 
 import           Util
 
-data Tile = Rock | Sand
-  deriving (Show, Eq)
-
 data Bottom = Abyss Int | Floor Int
 
 type Position = (Int, Int)
-type CaveMap = M.Map Position Tile
+type RockMap = S.HashSet Position
+type SandMap = S.HashSet Position
 
 fallDirections :: [Position]
 fallDirections = [(0, 1), (-1, 1), (1, 1)]
 
-fall :: Bottom -> Position -> CaveMap -> (Bool, CaveMap)
-fall b p c = case b of
-    Abyss a -> if snd p >= a then (True, c) else fall' (const True)
+origin :: Position
+origin = (500, 0)
+
+fall :: Bottom -> Position -> RockMap -> SandMap -> (Bool, SandMap)
+fall b p rm sm = case b of
+    Abyss a -> if snd p >= a then (True, sm) else fall' (const True)
     Floor f -> fall' (\(_, y) -> y < pred f)
   where
     fall' bcheck =
         case
-                find (\p' -> bcheck p' && isNothing (M.lookup p' c))
+                find
+                        (\p' -> bcheck p' && not (S.member p' sm) && not
+                            (S.member p' rm)
+                        )
                     $ map (addPairs p) fallDirections
             of
-                Nothing -> (False, M.insert p Sand c)
-                Just p' -> fall b p' c
+                Nothing -> (False, S.insert p sm)
+                Just p' -> fall b p' rm sm
 
-
-dropSand :: Bottom -> CaveMap -> CaveMap
-dropSand b c = if isJust $ M.lookup (500, 0) c
-    then c
-    else case fall b (500, 0) c of
-        (True , c') -> c'
-        (False, c') -> dropSand b c'
+dropSand :: Bottom -> RockMap -> SandMap -> SandMap
+dropSand b rm sm = if S.member origin sm
+    then sm
+    else case fall b origin rm sm of
+        (True , sm') -> sm'
+        (False, sm') -> dropSand b rm sm'
 
 wall :: String -> [Position]
 wall xs = concat $ zipWith wall' corners (tail corners)
@@ -61,13 +61,12 @@ wall xs = concat $ zipWith wall' corners (tail corners)
 solve :: [String] -> (Maybe String, Maybe String)
 solve xs = (Just $ show solve1, Just $ show solve2)
   where
-    sand   = length . M.filter (== Sand)
-    cave   = foldl' (\c p -> M.insert p Rock c) M.empty walls
-    walls  = concatMap wall xs
-    abyss  = 1 + maximum (map snd walls)
-    floor  = 2 + abyss
-    solve1 = sand $ dropSand (Abyss abyss) cave
-    solve2 = sand $ dropSand (Floor floor) cave
+    rockMap = foldl' (flip S.insert) S.empty walls
+    walls   = concatMap wall xs
+    abyss   = 1 + maximum (map snd walls)
+    floor   = 2 + abyss
+    solve1  = S.size $ dropSand (Abyss abyss) rockMap S.empty
+    solve2  = S.size $ dropSand (Floor floor) rockMap S.empty
 
 sample :: [String]
 sample = -- a: 24, b: 93
