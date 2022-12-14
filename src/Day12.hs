@@ -7,7 +7,10 @@ module Day12
     , test
     ) where
 
-import           Algorithm.Search               ( dijkstra )
+import           Algorithm.Search               ( aStar
+                                                , bfs
+                                                , dijkstra
+                                                )
 import           Data.Char                      ( ord )
 import           Data.List.Extra                ( foldl' )
 import           Data.Map                       ( Map )
@@ -16,6 +19,8 @@ import           Data.Maybe                     ( fromJust
                                                 , mapMaybe
                                                 )
 import           Data.Tuple.Extra               ( first )
+
+import           Util
 
 type Position = (Int, Int)
 type Elevation = Int
@@ -58,6 +63,7 @@ pass2 m = foldl' updateReachable m $ M.elems m
 solve :: [String] -> (Maybe String, Maybe String)
 solve xs = (Just solve1, Just solve2)
   where
+    target = position $ head $ filter ((== End) . special) $ M.elems graph
     solve1 = show . fst . fromJust $ findPathFrom
         (position $ head $ filter ((== Start) . special) $ M.elems graph)
     solve2 =
@@ -67,9 +73,15 @@ solve xs = (Just solve1, Just solve2)
             $ mapMaybe (findPathFrom . position)
             $ filter ((== 0) . elevation)
             $ M.elems graph
-    findPathFrom = dijkstra (\p -> reachable $ graph M.! p)
-                            (\_ _ -> 1 :: Int)
-                            (\p -> special (graph M.! p) == End)
+    findPathFrom =
+        (((,) =<< length) <$>) . bfs (\p -> reachable $ graph M.! p) (== target)
+    -- findPathFrom = dijkstra (\p -> reachable $ graph M.! p)
+    --                         (\_ _ -> 1 :: Int)
+    --                         (== target)
+    -- findPathFrom = aStar (\p -> reachable $ graph M.! p)
+    --                      (\_ _ -> 1 :: Int)
+    --                      (manhattan target)
+    --                      (== target)
     graph =
         pass2
             $ pass1
