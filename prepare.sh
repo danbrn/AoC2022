@@ -13,7 +13,7 @@ MAIN_FILE="app/Main.hs"
 SESSION_FILE="data/session.txt"
 SESSION=`cat $SESSION_FILE`
 IMPORT="import           Day$DAYNUM"
-ENTRY="  , ($1, Day$DAYNUM.solve)"
+ENTRY="    , ($1, Day$DAYNUM.solve)"
 
 if [ $# -ne 1 ]
 then
