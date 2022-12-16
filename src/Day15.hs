@@ -6,10 +6,7 @@ module Day15
     ) where
 
 import           Data.Char                      ( isDigit )
-import           Data.List.Extra                ( find
-                                                , nubOrd
-                                                , splitOn
-                                                )
+import           Data.List.Extra                ( splitOn )
 import           Data.Maybe                     ( mapMaybe )
 import           Data.Range                     ( (+=+)
                                                 , Bound(..)
@@ -17,7 +14,6 @@ import           Data.Range                     ( (+=+)
                                                 , Range(..)
                                                 , difference
                                                 , fromRanges
-                                                , inRanges
                                                 , invert
                                                 , lbe
                                                 , ube
