@@ -32,6 +32,7 @@ dependencies:
 - composition
 - search-algorithms
 - unordered-containers
+- range
 
 ghc-options:
 - -Wall

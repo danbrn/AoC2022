@@ -39,6 +39,7 @@ library
       Day12
       Day13
       Day14
+      Day15
       Util
   other-modules:
       Paths_AoC2022
@@ -54,6 +55,7 @@ library
     , megaparsec
     , mtl
     , optparse-applicative
+    , range
     , search-algorithms
     , split
     , unordered-containers
@@ -77,6 +79,7 @@ executable AoC2022-exe
     , megaparsec
     , mtl
     , optparse-applicative
+    , range
     , search-algorithms
     , split
     , unordered-containers
@@ -101,6 +104,7 @@ test-suite AoC2022-test
     , megaparsec
     , mtl
     , optparse-applicative
+    , range
     , search-algorithms
     , split
     , unordered-containers
